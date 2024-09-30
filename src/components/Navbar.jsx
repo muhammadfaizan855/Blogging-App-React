@@ -15,6 +15,7 @@ const Navbar = () => {
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
+        
         console.log(uid);
         setUserLogin(true)
       } else {
@@ -32,7 +33,7 @@ const Navbar = () => {
   const userLogout = ()=>{
     signOut(auth)
     .then(() => {
-      navigate("/login")  
+      navigate('')  
     }).catch((error) => {
       alert("err" , error);
     });    

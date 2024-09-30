@@ -9,10 +9,11 @@ const Dashboard = () => {
     // state
 
   const [blogs , setBlogs] = useState([])
-  
+  const [userUid , setUserUid] = useState(null);
+
   // ref value
 
-  const title = useRef()
+  const titleVal = useRef()
   const description = useRef()
 
 
@@ -24,6 +25,7 @@ const Dashboard = () => {
         console.log(uid);
         const blogsData = await getData("blogs" , user.uid)
         console.log(blogsData)
+        setUserUid(user.uid)
         setBlogs([...blogsData])
       } else {
        console.log("user login not");
@@ -33,21 +35,29 @@ const Dashboard = () => {
   } , [])
 
 
+  useEffect(() => {
+    async function getUserFromDataBase() {
+        let getUserData = await getData("users", userUid)
+        console.log(getUserData);
+    }
+    getUserFromDataBase()
+  }, [])
+
   // user data save firestore
 
   const userDataFirestore = async (event)=>{
    event.preventDefault();
-   console.log(title.current.value);
+   console.log(titleVal.current.value);
    console.log(description.current.value);
   
    try {
     const response = await sendData({
-      title: title.current.value,
+      title: titleVal.current.value,
       description: description.current.value,
       uid: auth.currentUser.uid
     }, 'blogs')
     blogs.push({
-      title: title.current.value,
+      title: titleVal.current.value,
       description: description.current.value,
       uid: auth.currentUser.uid
     })
@@ -59,6 +69,7 @@ const Dashboard = () => {
     console.error(error)
   }
    
+  
    
   }
 
@@ -73,7 +84,7 @@ const Dashboard = () => {
  
     <div className='flex mx-[100px] mt-5'>
       <form onSubmit={userDataFirestore}>
-      <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" ref={title} />
+      <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" ref={titleVal} />
       <textarea placeholder="Description" className="textarea textarea-bordered textarea-lg w-full max-w-xs mt-5" ref={description}></textarea><br />
       <button className='btn btn-primary mt-3'>Publish</button>
       </form>
@@ -88,7 +99,7 @@ const Dashboard = () => {
     <div>
      {blogs.length > 0 ? blogs.map((item , index)=>{
      return <div key={item.id} className='card text-black w-96 shadow-xl mt-5 mx-[100px]'>
-        <div className="card-body ">
+        <div className="card-body">
        <h1>{item.title}</h1>
        <p>{item.description}</p>
         </div>
