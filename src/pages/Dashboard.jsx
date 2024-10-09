@@ -1,7 +1,8 @@
 import { onAuthStateChanged } from 'firebase/auth'
 import React, { useEffect, useRef, useState } from 'react'
-import { auth, getData, sendData } from '../config/firebase/firebasemethod'
-
+import { auth, getData, loginUser, sendData } from '../config/firebase/firebasemethod'
+import { getDownloadURL, listAll, ref } from 'firebase/storage'
+import { storage } from '../config/firebase/firebaseconfig'
 
 
 const Dashboard = () => {
@@ -10,6 +11,9 @@ const Dashboard = () => {
 
   const [blogs , setBlogs] = useState([])
   const [userUid , setUserUid] = useState(null);
+  const [image , setImage] = useState(null);
+
+
 
   // ref value
 
@@ -18,15 +22,37 @@ const Dashboard = () => {
 
 
   useEffect(()=>{
+    const listImages = async () => {
+          
 
+      const imagesRef = ref(storage, `users/`); // Adjust the path as needed
+      try {
+        const result = await listAll(imagesRef);        
+        const imageUrls = await Promise.all(
+          result.items.map(async (item) => {
+            const url = await getDownloadURL(item);
+            
+            return url;
+          })
+        );
+        console.log(imageUrls); // Array of image URLs
+        setImage(imageUrls)
+        return imageUrls;
+      } catch (error) {
+        console.error('Error listing images:', error);
+      }
+    };
+    listImages()
+// ....
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const uid = user.uid;
-        console.log(uid);
+        const email = user.email;
+        console.log(user.email);
         const blogsData = await getData("blogs" , user.uid)
         console.log(blogsData)
-        setUserUid(user.uid)
-        setBlogs([...blogsData])
+        
+        // setUserUid(user.uid)
+        // setBlogs([...blogsData])
       } else {
        console.log("user login not");
        
@@ -35,13 +61,13 @@ const Dashboard = () => {
   } , [])
 
 
-  useEffect(() => {
-    async function getUserFromDataBase() {
-        let getUserData = await getData("users", userUid)
-        console.log(getUserData);
-    }
-    getUserFromDataBase()
-  }, [])
+  // useEffect(() => {
+  //   async function getUserFromDataBase() {
+  //       let getUserData = await getData("blogs", userUid)
+  //       console.log(getUserData);
+  //   }
+  //   getUserFromDataBase()
+  // }, [])
 
   // user data save firestore
 
@@ -49,17 +75,22 @@ const Dashboard = () => {
    event.preventDefault();
    console.log(titleVal.current.value);
    console.log(description.current.value);
+  console.log(loginUser.userName);
   
    try {
     const response = await sendData({
       title: titleVal.current.value,
       description: description.current.value,
-      uid: auth.currentUser.uid
+      uid: auth.currentUser.uid,
+            email : auth.currentUser.email,
+            userName : auth.currentUser.userName
     }, 'blogs')
     blogs.push({
       title: titleVal.current.value,
       description: description.current.value,
-      uid: auth.currentUser.uid
+      uid: auth.currentUser.uid,
+      email : auth.currentUser.email,
+      userName : auth.currentUser.userName
     })
     setBlogs([...blogs])
     console.log(response);
@@ -92,6 +123,7 @@ const Dashboard = () => {
 
     
     <h1 className='mx-[100px] mt-5 text-2xl'>All User Blog</h1>
+    <img src={image} alt="" />
    
 
    {/* render items */}
@@ -100,6 +132,8 @@ const Dashboard = () => {
      {blogs.length > 0 ? blogs.map((item , index)=>{
      return <div key={item.id} className='card text-black w-96 shadow-xl mt-5 mx-[100px]'>
         <div className="card-body">
+          <h1>{item.email}</h1>
+          <h1>{item.userName}</h1>
        <h1>{item.title}</h1>
        <p>{item.description}</p>
         </div>

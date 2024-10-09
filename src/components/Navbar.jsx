@@ -27,13 +27,15 @@ const Navbar = () => {
 
 
   const LoginBtn = ()=>{
+    
     navigate("/login")
   }
 
   const userLogout = ()=>{
     signOut(auth)
     .then(() => {
-      navigate('')  
+      setUserLogin(false)
+      navigate('/login')  
     }).catch((error) => {
       alert("err" , error);
     });    
