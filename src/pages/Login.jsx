@@ -20,7 +20,7 @@ const Login = () => {
       email : email.current.value,
       password : password.current.value    
      })
-     console.log("user login succusfull" , userLogin);
+     console.log("user login succusfull" , userLogin.userName);
      navigate("/dashboard")
   } catch(error){
     console.error(error)

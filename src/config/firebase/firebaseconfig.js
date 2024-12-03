@@ -8,7 +8,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyD3Llw4QZKexvACSWT7GST2jp7q_7iS_g4",
   authDomain: "blogging-app-dbb7d.firebaseapp.com",
   projectId: "blogging-app-dbb7d",
-  storageBucket: "blogging-app-dbb7d.appspot.com",
+  storageBucket: "gs://blogging-app-dbb7d.appspot.com",
   messagingSenderId: "180218706645",
   appId: "1:180218706645:web:bd5579dcb9dc75459b805c",
   measurementId: "G-SDF3902ZQH"

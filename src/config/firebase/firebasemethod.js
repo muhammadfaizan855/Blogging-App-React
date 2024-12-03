@@ -243,11 +243,11 @@ const storage = getStorage(app);
 // register user
 let signUpUser = (obj) => {
   return new Promise((resolve, reject) => {
-      createUserWithEmailAndPassword(auth, obj.email, obj.password)
+      createUserWithEmailAndPassword(auth, obj.email, obj.password )
           .then(async (res) => {
               resolve((obj.id = res.user.uid));
               delete obj.password
-              await addDoc(collection(db, "users"), obj)
+              await addDoc(collection(db, "blogs"), obj)
                   .then((res) => {
                       console.log("user added to database successfully");
                   })
@@ -267,7 +267,7 @@ let loginUser = (obj) => {
       signInWithEmailAndPassword(auth, obj.email, obj.password)
           .then(async () => {
               const q = query(
-                  collection(db, "users"),
+                  collection(db, "blogs"),
                   where("id", "==", auth.currentUser.uid)
               );
               const querySnapshot = await getDocs(q);
@@ -358,7 +358,7 @@ const updateDocument = async (obj, id, name) => {
 }
 
 async function uploadImage(files, email) {
-  const storageRef = ref(storage, email);
+  const storageRef = ref(storage,'users/' + email);
   try {
       const uploadImg = await uploadBytes(storageRef, files);
       const url = await getDownloadURL(storageRef);
