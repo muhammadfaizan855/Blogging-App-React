@@ -37,7 +37,9 @@ const Home = () => {
         <p>{item.description}</p>
         </div>
         </div>))
-        ) : (<h1>Loading...</h1>
+        ) : (<div className='text-center mt-5'>
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
         )}
       </div>
     </>

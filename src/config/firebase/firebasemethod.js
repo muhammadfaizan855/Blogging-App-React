@@ -299,7 +299,7 @@ const sendData = (obj, colName) => {
   return new Promise((resolve, reject) => {
       addDoc(collection(db, colName), obj)
           .then((res) => {
-              resolve("data send to db successfully");
+              resolve("data send to db successfully" , res);
           })
           .catch((err) => {
               reject(err);

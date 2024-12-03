@@ -20,17 +20,19 @@ const Register = () => {
     event.preventDefault()
     
     let userProfileUrl = await uploadImage(profileImage.current.files[0], email.current.value)
-    console.log(userProfileUrl);
+    // console.log(userProfileUrl);
 
     let registerUserData = await signUpUser({
       userName : userName.current.value,
       email : email.current.value,
       password : password.current.value,
       userProfile : userProfileUrl
+    
     })
+    registerUserData()
     console.log(registerUserData);
     navigate('/login')
-    
+      
     
   }
 
